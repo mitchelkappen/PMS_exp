@@ -183,7 +183,7 @@ var webcamStop = {
   url: "stopCamera.html",
   cont_btn: "Volgende",
   execute_script: true,
-  on_finish: function(){
+  on_load: function(){
     var temp = jsPsych.data.get().select('subject').values[0];
     var IDnumber = temp.substr(0,temp.length -2);
     var filenameID  = 'data_'+ParticipantNo+'_'+ IDnumber +'_'+Datum + '_wCAM'; // Filename

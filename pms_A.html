@@ -144,8 +144,8 @@ function shuffle(array) {
 }
 
 tempTimeline = [];
-// for (i = 0; i <= imgNumbers.length-1; i++) {
-  for (i = 0; i <= 3; i++) {
+for (i = 0; i <= imgNumbers.length-1; i++) {
+  // for (i = 0; i <= 3; i++) {
   var trialTimeline = {
     timeline: [
       {
@@ -182,7 +182,13 @@ var webcamStop = {
   type:'external-html',
   url: "stopCamera.html",
   cont_btn: "Volgende",
-  execute_script: true
+  execute_script: true,
+  on_load: function(){
+    var temp = jsPsych.data.get().select('subject').values[0];
+    var IDnumber = temp.substr(0,temp.length -2);
+    var filenameID  = 'data_'+ParticipantNo+'_'+ IDnumber +'_'+Datum + '_wCAM'; // Filename
+    saveData(filenameID,jsPsych.data.get().csv());
+  }
 };
 
 timeline.push(webcamStop)
@@ -260,7 +266,7 @@ jsPsych.init( {
     saveData(interactionID, interactionData.csv());
   },
   on_close: function() {
-    var filenameID  = "data_"+ jsPsych.data.get().select('subject').values[0] + "_" + jsPsych.data.get().select('session').values[0] + "_"+Datum; // Filename
+    var filenameID  = 'data_'+ParticipantNo+'_'+ IDnumber +'_'+Datum + '_CLOSED'; // Filename
     saveData(filenameID,jsPsych.data.get().csv());       // Voeg bij naam nog participant ID enzo in, maar moet er een invoer voor bestaan voor het experiment
     var interactionData = jsPsych.data.getInteractionData();
     saveData(interactionID, interactionData.csv());
