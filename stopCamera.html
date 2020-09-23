@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+  <p>U heeft zojuist het volledige experiment doorlopen! Druk hieronder op 'Stop' om de video opname te starten. Hierna zult u de voortgang van het opslaan zien. </p>
+  <p> Wanneer de voortgang op 100% staat is de video succesvol opgeslagen en kunt u op volgende drukken. Op de volgende pagina zal de data van de rest van de taak opgeslagen worden! </p>
+
+  <div><button id="stop" onclick="onBtnStopClicked()">Stop</button>
+
+    <article id="Voortgang">
+      <article><!-- <p> Upload voortang: </p> <p id="Voortgang"> </p> <p> % </p> --></article>
+    </article>
+  </div>
+  <a download="mediarecorder.webm" href="" id="downloadLink" name="mediarecorder.webm"></a>
+
+  <p id="data"> </p>
+  <script src="https://webrtchacks.github.io/adapter/adapter-latest.js"></script> <script type="text/javascript" charset="utf-8">
+
+    var stopBtn = document.querySelector('button#stop');
+    var downloadLink = document.querySelector('a#downloadLink');
+
+
+    function onBtnStopClicked(){
+      mediaRecorder.stop();
+      videoElement.controls = true;
+      recBtn.disabled = false;
+      stopBtn.disabled = true;
+    }
+
+    var downloadLink = document.querySelector('a#downloadLink');
+
+    var d = new Date();
+    var Year = d.getFullYear();
+    var Month = d.getMonth() + 1;
+    var Day = d.getDate();
+    var Datum =  Day.toString() + "-" + Month.toString() + "-" + Year.toString();
+
+    // NEW STUF HERE //
+    function uploadBlob(blob, name) {
+      var formData = new FormData();
+      formData.append('video-blob', blob);
+      formData.append('video-filename', name);
+      updateText = document.getElementById("Voortgang");
+      $.ajax({
+        xhr: function() {
+          var xhr = new window.XMLHttpRequest();
+
+          xhr.upload.addEventListener("progress", function(evt) {
+            if (evt.lengthComputable) {
+              var percentComplete = evt.loaded / evt.total;
+              percentComplete = parseInt(percentComplete * 100);
+              updateText.innerHTML = 'Upload Voortgang: ' + percentComplete + '%';
+
+              if (percentComplete === 100) {
+
+              }
+
+            }
+          }, false);
+
+          return xhr;
+        },
+        url: "/limesurvey2/upload/surveys/10001/files/uploadBLOB.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          // alert('Opname is succesvol gestopt en het video bestand is correct opgeslagen!');
+          stopBtn.innerHTML = 'Opname succesvol gestopt en opgeslagen!';
+          updateText.innerHTML = 'Upload Voortgang: 100% <br><br> U mag nu verder!'
+        },
+        error: function(jqXHR, textStatus, errorMessage) {
+          alert('Error:' + JSON.stringify(errorMessage));
+          stopBtn.innerHTML = 'Error, opname niet goed opgeslagen.';
+        }
+      });
+    }
+    // NEW STUFF ENDED HERE //
+
+    mediaRecorder.onstop = function(){
+      var blob = new Blob(chunks, { type: "video/webm" } );
+      chunks = [];
+
+      // stopBtn.innerHTML = 'Opname succesvol gestopt!';
+
+      var ParticipantNo = jsPsych.data.get().select('subject').values[0];
+      var SessionNo = jsPsych.data.get().select('session').values[0];
+
+      var name  = "video_"+ParticipantNo+"_"+SessionNo+"_"+Datum+".webm" ;
+
+      ///////
+      uploadBlob(blob,name);
+      ///////
+    };
+
+    window.onload = function a() {
+      $('#question{956} input[type="text"]:eq(0)').hide();
+    }
+    window.onload()
+
+  </script>
+
+  <p><br />
+    <button type="button" id="Volgende">Volgende</button>
+    <br />
+    <style type="text/css">.boilerplate .answer,
+      .boilerplate .survey-question-help {
+        display:none;
+      }
+    </style>
+    <!-- Blob upload source: https://stackoverflow.com/questions/36245494/how-do-i-upload-audiovideo-as-one-to-server/36245495#36245495 --></p>
+  </body>
+  </html>

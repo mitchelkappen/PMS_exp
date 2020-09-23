@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/jspsych.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-audio-keyboard-response.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-audio-button-response-mk.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-instructions.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-survey-text.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-fullscreen.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-image-button-response.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-external-html.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-survey-likert.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-survey-likert-SAM-valence-arousal.js"></script>
+
+  <!-- <script src="https://ghepmk01.ugent.be/limesurvey2/upload/surveys/10001/files/webgazer.js"></script> -->
+  <script src="https://webgazer.cs.brown.edu/webgazer.js?"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+  <link rel="stylesheet" href="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/css/jspsych.css"></link>
+  <link rel="stylesheet" href="https://ghepmk01.ugent.be/limesurvey2/upload/surveys/454468/files/css/aanvullend.css"></link>
+
+  <style>
+
+  </style>
+</head>
+<body></body>
+<script>
+
+////////////// SCRIPT START /////////////////
+
+// Missing images:
+// Series A: 9582, replaced by 9592
+// Series B: 4652, replaced by 9594
+
+var timeline = [];
+
+var tempStimuli = [];
+var allStimuli = [];
+var imgNumbers = [7182, 7211, 5600, 1463, 1610, 6313, 5030, 9300, 9600, 2057, 4490, 9220, 2340, 7480, 2165, 4180, 9320, 4531, 1710, 9921, 4658, 9592];
+// var imgNumbers = [7238, 7224, 5982, 1722, 1750, 6312, 5800, 7380, 9911, 2070, 4550, 2800, 2360, 7481, 2160, 4290, 3261, 4561, 1440, 9920, 9584, 9594];
+imgNumbers = shuffle(imgNumbers);
+var scale_5 = [ // Number of answer options for possibilities in Likert scales
+  "",
+  "",
+  "",
+  "",
+  ""
+]
+
+var allStimuli = tempStimuli;
+
+timeline.push({
+  type: 'fullscreen',
+  message: 'Wanneer u op de onderstaande knop drukt zal het experiment naar volledig scherm gaan en zullen de instructies starten.<br><br>',
+  button_label: 'Start!',
+  fullscreen_mode: true,
+  on_finish: function(){
+    // webgazer.setGazeListener(function(data, elapsedTime) {
+    //   if (data == null) {
+    //     return;
+    //   }
+    //   var xprediction = data.x; //these x coordinates are relative to the viewport
+    //   var yprediction = data.y; //these y coordinates are relative to the viewport
+    //   console.log(elapsedTime); //elapsed time is based on time since begin was called
+    //   console.log('Webgazer started')
+    // }).begin();
+    webgazer.setRegression('ridge') // 'ridge', 'weightedRidge', 'threadedRidge'
+    .setTracker('TFFacemesh') //.setTracker('clmtrackr') // 'TFFacemesh' currently, the single available option
+    .setGazeListener(function (data, clock) {
+      console.log(data)
+      console.log(clock)
+      // data:  object containing an x and y key which are the x and y prediction coordinates (no bounds limiting)
+      // clock: elapsed time in milliseconds since webgazer.begin() was called
+    })
+    .begin()
+    set_review_area(true);
+  }
+});
+
+// show or hide webgazer canvas review area
+function set_review_area(visible) {
+if (!webgazer.isReady()) return;
+// visible: boolean true or false
+webgazer.showVideo(visible);
+webgazer.showFaceOverlay(visible);
+webgazer.showFaceFeedbackBox(visible);
+webgazer.showPredictionPoints(visible);
+}
+
+
+timeline.push({
+  type: 'survey-text',
+  questions: [
+    {prompt: 'Wat is uw participant nummer?', rows: 1, columns: 10},
+  ],
+  on_finish: function(data) {
+    var participantID = data.responses;
+    var temp = participantID.substr(7, participantID.length - 2);
+    jsPsych.data.addProperties({subject: temp});
+  }
+});
+
+var webcamStart = {
+  type:'external-html',
+  url: "startCamera.html",
+  cont_btn: "Volgende",
+  execute_script: true
+};
+
+timeline.push(webcamStart);
+
+var soundCheck = {
+  type: 'audio-keyboard-response',
+  stimulus: 'https://ghepmk01.ugent.be/limesurvey2/upload/surveys/781552/files/beep.wav',
+  choices: jsPsych.NO_KEYS,
+  trial_ends_after_audio : true,
+}
+
+var instructions = {
+  type: 'instructions',
+  pages: [
+    'U zult zometeen een taak uitvoeren waarbij u verschillende afbeeldingen te zien krijgt. <br><br>' +
+    'Voorafgaand aan elke afbeelding ziet u 3 seconde een fixatiekruis waar u naar dient te kijken zodat u zeker in het midden van het beeld kijkt. <br>' +
+    'Vervolgens ziet u 6 seconden lang een afbeelding, waarna u gevraagd wordt te beoordelen hoe u zich bij deze afbeelding voelt. <br>' +
+    'U heeft maximaal 5 seconden om te antwoorden, dus geef aan wat het eerste in u opkomt. <br>',
+    'U zult elke afbeelding op twee schalen beoordelen. <br><br>' +
+    'De eerste schaal is <b>Valentie</b>. <br>' +
+    'Dit gaat over hoe positief of negatief u zich op dit moment voelt. Kies het icoon dat uw huidige staat het beste vertegenwoordigt. <br>' +
+    'U kunt dan kiezen uit 1 van de volgende icoontjes. Bekijk deze goed, want tijdens het experiment zal u beperkte tijd hebben: <br><br>' +
+    '<img src = https://ghepmk01.ugent.be/limesurvey2/upload/surveys/454468/images/valence.png> ',
+    'De tweede schaal is <b>Opwinding</b>. <br>' +
+    'Dit gaat over hoe rustig/onrustig u zich op dit moment voelt. Kies het icoon dat uw huidige staat het beste vertegenwoordigt. <br>' +
+    'U kunt dan kiezen uit 1 van de volgende icoontjes. Bekijk deze goed, want tijdens het experiment zal u beperkte tijd hebben: <br><br>' +
+    '<img src = https://ghepmk01.ugent.be/limesurvey2/upload/surveys/454468/images/arousal.png> ',
+    'Omdat we verschillende gevoelens aan willen spreken die ook in het echte leven voorkomen zullen de afbeeldingen wijd uiteenlopen. <br>' +
+    'Dat wil zeggen dat er zowel positieve als negatieve en zowel saaie, maar ook vieze afbeeldingen voor kunnen komen. <br><br>' +
+    'Mocht u tijdens het experiment bedenken dat u het toch liever niet doorzet of dat u de afbeeldingen onprettig vindt, kun u zeker contact met ons opnemen'
+  ],
+  show_clickable_nav: true,
+  allow_keys: false,
+  button_label_previous: 'vorige',
+  button_label_next: 'volgende'
+}
+
+var openingScreen = {
+  type: 'html-button-response',
+  stimulus: 'Klik hieronder om de experimentele taak te starten. '+
+  'Succes! <br>',
+  choices: ['Start!']
+};
+
+// PUSHING Part
+timeline.push(instructions);
+timeline.push(soundCheck);
+timeline.push(openingScreen);
+
+// Create Shuffle function
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
+tempTimeline = [];
+for (i = 0; i <= imgNumbers.length-1; i++) {
+  // for (i = 0; i <= 3; i++) {
+  var trialTimeline = {
+    timeline: [
+      {
+        type: 'html-keyboard-response',
+        stimulus: '+',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 3000
+      },
+      {
+        type: 'image-keyboard-response',
+        stimulus: "https://ghepmk01.ugent.be/limesurvey2/upload/surveys/454468/images/Series_A/" + imgNumbers[i] + ".jpg",
+        choices: jsPsych.NO_KEYS,
+        prompt: "<p>Bekijk deze afbeelding voor 6 seconden</p>",
+        trial_duration: 6000
+        // trial_duration: 1000
+      },
+      {
+        type: 'survey-likert-SAM-valence-arousal',
+        // type: 'survey-likert',
+        preamble: '<b>Antwoord zo snel mogelijk</b>',
+        questions:[
+          {prompt: 'Valentie:', name: 'Valence', labels: scale_5, required: true},
+          {prompt: 'Opwinding:', name: 'Arousal', labels: scale_5, required: true}
+        ],
+        randomize_question_order: false
+      }
+    ]
+  }
+  tempTimeline.push(trialTimeline);
+}
+timeline = timeline.concat(tempTimeline);
+
+var webcamStop = {
+  type:'external-html',
+  url: "stopCamera.html",
+  cont_btn: "Volgende",
+  execute_script: true,
+  on_load: function(){
+    var temp = jsPsych.data.get().select('subject').values[0];
+    var IDnumber = temp.substr(0,temp.length -2);
+    var filenameID  = 'data_'+ParticipantNo+'_'+ IDnumber +'_'+Datum + '_wCAM'; // Filename
+    saveData(filenameID,jsPsych.data.get().csv());
+  }
+};
+
+timeline.push(webcamStop)
+
+var afsluitendeTrial = {
+  type: 'html-keyboard-response',
+  stimulus: 'Dit is het einde van de taak. Druk op een toets om de data op te slaan en de taak af te sluiten.' +
+  '<br>Dit was het einde van het onderzoek van vandaag!'+
+  '<br><br>Als dit uw laatste sessie was willen we u van harte bedanken voor uw deelname.'+
+  '<br>Indien u graag op de hoogte blijft van uw resultaten of wat kwijt wilt over het onderzoek mag u altijd contact met ons opnemen (Liese.Opsomer@UGent.be).'+
+  '<br><br>Ghent Experimental Psychiatry Lab Universiteit Gent',
+  choices: jsPsych.ALL_KEYS,
+}
+
+timeline.push(afsluitendeTrial)
+
+// EXPERIMENTAL DESIGN
+
+//////////////// PUSH IT ALL /////////////////
+
+timeline.push({
+  type: 'fullscreen',
+  fullscreen_mode: false
+});
+
+// Participant information
+var d = new Date();
+var Year = d.getFullYear();
+var Month = d.getMonth() + 1;
+var Day = d.getDate();
+var Datum =  Day.toString() + "-" + Month.toString() + "-" + Year.toString();
+
+var ParticipantNo = ["{ParticipantNo}"]; // not working here, wel in html
+
+var SessionNo = ["{SessionNo}"]; // not working here, wel in html
+
+
+
+function saveData(name, data){
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'uploadCSV.php'); // 'write_data.php' is the path to the php file described above.
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  //////
+  xhr.onreadystatechange = function () {
+    // In local files, status is 0 upon success in Mozilla Firefox
+    if(xhr.readyState === XMLHttpRequest.DONE) {
+      var status = xhr.status;
+      if (status === 0 || (status >= 200 && status < 400)) {
+        // The request has been completed successfully
+        console.log(xhr.responseText);
+      } else {
+        // Oh no! There has been an error with the request!
+      }
+    }
+  };
+  ///////
+  xhr.send(JSON.stringify({filename: name, filedata: data}));
+}
+
+jsPsych.init( {
+  timeline: timeline,
+  preload_imgs: allStimuli,
+  use_webaudio: false,
+  on_finish: function() {
+    var temp = jsPsych.data.get().select('subject').values[0];
+    var IDnumber = temp.substr(0,temp.length -2);
+    var filenameID  = 'data_'+ParticipantNo+'_'+ IDnumber +'_'+Datum; // Filename
+    var interactionID  = "interactionData/interactData_"+ jsPsych.data.get().select('subject').values[0] +"_"+ jsPsych.data.get().select('session').values[0] +"_"+Datum; // Filename
+
+    // console.log(jsPsych.data.get().csv()); // Show data in console
+    // jsPsych.data.get().localSave('csv', filenameID+'.csv'); // Save CSV locally (misschien goed idee als backup bij de ECT studie?)
+    saveData(filenameID,jsPsych.data.get().csv());       // Voeg bij naam nog participant ID enzo in, maar moet er een invoer voor bestaan voor het experiment
+    // jsPsych.data.displayData('json');
+    var interactionData = jsPsych.data.getInteractionData();
+    saveData(interactionID, interactionData.csv());
+  },
+  on_close: function() {
+    var filenameID  = 'data_'+ParticipantNo+'_'+ IDnumber +'_'+Datum + '_CLOSED'; // Filename
+    saveData(filenameID,jsPsych.data.get().csv());       // Voeg bij naam nog participant ID enzo in, maar moet er een invoer voor bestaan voor het experiment
+    var interactionData = jsPsych.data.getInteractionData();
+    saveData(interactionID, interactionData.csv());
+  }
+});
+
+</script>
+</html>
+
+
+<!-- Spul om erin te bouwen
+on_interaction_data_update: Voor als ze iets anders gaan doen in browser
+-->
