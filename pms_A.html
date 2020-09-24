@@ -14,6 +14,8 @@
   <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-external-html.js"></script>
   <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-survey-likert.js"></script>
   <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-survey-likert-SAM-valence-arousal.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-html-slider-response.js"></script>
+  <script src="https://ghepmk01.ugent.be/limesurvey/plugins/jsPsych-6.1.0/plugins/jspsych-canvas-sliders-response.js"></script>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
@@ -76,8 +78,6 @@ var webcamStart = {
   execute_script: true
 };
 
-timeline.push(webcamStart);
-
 var soundCheck = {
   type: 'audio-keyboard-response',
   stimulus: 'https://ghepmk01.ugent.be/limesurvey2/upload/surveys/781552/files/beep.wav',
@@ -88,22 +88,28 @@ var soundCheck = {
 var instructions = {
   type: 'instructions',
   pages: [
-    'U zult zometeen een taak uitvoeren waarbij u verschillende afbeeldingen te zien krijgt. <br><br>' +
-    'Voorafgaand aan elke afbeelding ziet u 3 seconde een fixatiekruis waar u naar dient te kijken zodat u zeker in het midden van het beeld kijkt. <br>' +
-    'Vervolgens ziet u 6 seconden lang een afbeelding, waarna u gevraagd wordt te beoordelen hoe u zich bij deze afbeelding voelt. <br>' +
-    'U heeft maximaal 5 seconden om te antwoorden, dus geef aan wat het eerste in u opkomt. <br>',
-    'U zult elke afbeelding op twee schalen beoordelen. <br><br>' +
-    'De eerste schaal is <b>Valentie</b>. <br>' +
-    'Dit gaat over hoe positief of negatief u zich op dit moment voelt. Kies het icoon dat uw huidige staat het beste vertegenwoordigt. <br>' +
-    'U kunt dan kiezen uit 1 van de volgende icoontjes. Bekijk deze goed, want tijdens het experiment zal u beperkte tijd hebben: <br><br>' +
-    '<img src = https://ghepmk01.ugent.be/limesurvey2/upload/surveys/454468/images/valence.png> ',
-    'De tweede schaal is <b>Opwinding</b>. <br>' +
-    'Dit gaat over hoe rustig/onrustig u zich op dit moment voelt. Kies het icoon dat uw huidige staat het beste vertegenwoordigt. <br>' +
-    'U kunt dan kiezen uit 1 van de volgende icoontjes. Bekijk deze goed, want tijdens het experiment zal u beperkte tijd hebben: <br><br>' +
-    '<img src = https://ghepmk01.ugent.be/limesurvey2/upload/surveys/454468/images/arousal.png> ',
-    'Omdat we verschillende gevoelens aan willen spreken die ook in het echte leven voorkomen zullen de afbeeldingen wijd uiteenlopen. <br>' +
-    'Dat wil zeggen dat er zowel positieve als negatieve en zowel saaie, maar ook vieze afbeeldingen voor kunnen komen. <br><br>' +
-    'Mocht u tijdens het experiment bedenken dat u het toch liever niet doorzet of dat u de afbeeldingen onprettig vindt, kun u zeker contact met ons opnemen'
+    'U zult zo een taak uitvoeren waarbij u verschillende afbeeldingen te zien krijgt welke u daarna op twee schalen beoordeelt aan de hand van uw eerste indruk.'+
+    '<br><br>Als u het moeilijk vindt deze schalen te beantwoorden voor een afbeelding, probeer dan zo goed mogelijk te antwoorden zonder te diep na te denken. <br> Gebruik uw intu&iuml;tie. ',
+    'U zult telkens eerst 3 seconden een fixatiekruis zien waar u naar dient te kijken. ' +
+    '<br>Vervolgens ziet u de afbeeldingen voor 6 seconden en daarna dient u zo snel mogelijk te antwoorden wat u bij de afbeeldingen voelt, geef dus aan wat het eerste in u opkomt. ' +
+    '<br><br>Bij elke afbeelding dient u op twee schalen te antwoorden: <b>valentie / aangenaamheid</b> en <b>activiteit / opwinding</b>. <br>Deze zullen nu eerst beter uitgelegd worden!',
+    '<b> Valentie / aangenaamheid </b> is een maatstaaf voor waarde.'+
+    '<br><br>Een afbeelding is POSITIEF als het iets vertegenwoordigt dat als goed wordt beschouwd, terwijl de afbeelding NEGATIEF is als het iets vertegenwoordigt dat als slecht wordt beschouwd.'+
+    '<br>Geef de valentie van elke afbeelding aan op een schaal van ZEER NEGATIEF tot ZEER POSITIEF, waarbij het middelpunt NEUTRAAL vertegenwoordigt. ',
+    '<b> Voorbeelden:</b><br><br>'+
+    'Als u bijvoorbeeld het gevoel hebt dat &quot;atoombom&quot; een zeer negatieve betekenis heeft, dan antwoord u ver links op de schaal.'+
+    '<br>Als u bijvoorbeeld het gevoel hebt dat &quot;fantastisch&quot; een zeer positieve betekenis heeft, dan antwoordt u ver rechts op de schaal.'+
+    '<br>Als u het gevoel heeft dat &quot;spruitjes&quot; vrij onaangenaam is voor u, dan antwoord u een beetje links op de schaal.'+
+    '<br>Als u het gevoel heeft dat &quot;ontspannen&quot; een vrij positieve betekenis voor u heeft, dan antwoord u een beetje rechts op de schaal.'+
+    '<br><br> <img src = https://ghepmk01.ugent.be/limesurvey2/upload/surveys/987313/files/Valentie.PNG>',
+    '<b> Activiteit / opwinding </b> is een maatstaaf voor opwinding versus kalmte.'+
+    '<br><br>Een afbeelding is ACTIEF als je je hierdoor gestimuleerd, opgewonden, zenuwachtig of klaarwakker voelt. Een afbeelding is PASSIEF als u zich er ontspannen, kalm, traag, saai of slaperig van voelt.'+
+    '<br>Geef aan hoe opwindend u elke afbeelding vindt op een schaal van ZEER PASSIEF tot ZEER ACTIEF, waarbij het middelpunt een matige opwinding vertegenwoordigt. ',
+    '<b> Voorbeelden:</b><br><br>'+
+    'Als u bijvoorbeeld vindt dat &quot;hangmat&quot; een vrij passieve betekenis heeft, dan kiest u vrij ver links op de schaal.'+
+    '<br>Als u vindt dat &quot;werken&quot; een vrij actieve betekenis heeft, dan kiest u vrij ver rechts op de schaal.'+
+    '<br>Als u vindt dat &quot;mediteren&quot; een zeer kalme betekenis heeft, dan kiest u ver links op de schaal.'+
+    '<br>Als u vindt dat &quot;explosief&quot; een zeer opwindende betekenis heeft, dan kiest u ver rechts op de schaal.<br><br> <img src = https://ghepmk01.ugent.be/limesurvey2/upload/surveys/987313/files/Opwinding.PNG>',
   ],
   show_clickable_nav: true,
   allow_keys: false,
@@ -119,6 +125,7 @@ var openingScreen = {
 };
 
 // PUSHING Part
+timeline.push(webcamStart);
 timeline.push(instructions);
 timeline.push(soundCheck);
 timeline.push(openingScreen);
@@ -163,15 +170,28 @@ for (i = 0; i <= imgNumbers.length-1; i++) {
         // trial_duration: 1000
       },
       {
-        type: 'survey-likert-SAM-valence-arousal',
-        // type: 'survey-likert',
-        preamble: '<b>Antwoord zo snel mogelijk</b>',
-        questions:[
-          {prompt: 'Valentie:', name: 'Valence', labels: scale_5, required: true},
-          {prompt: 'Opwinding:', name: 'Arousal', labels: scale_5, required: true}
-        ],
-        randomize_question_order: false
-      }
+        type: 'canvas-sliders-response',
+        stimulus: ()=>{},
+        canvasWidth: window.innerWidth,
+        sliderCount: 2,
+        min: 0,
+        max: 100,
+        start: 50,
+        step: 1,
+        labels:[['Negatief', 'Positief'],['Passief', 'Actief']],
+        slider_full_width: [true],
+        require_change: [1, 1],
+        require_change_warning: ['<span style="color: red;">'+
+                'Beweeg de slider</span>'],
+        slider_arrangement: [0,1],
+        slider_prompt: [['Valentie'],['Opwinding']],
+        button_label: 'Volgende',
+        on_load: function(){ // Set slider width to half of page width
+          halfValue = window.innerWidth*.5;
+          document.getElementById("jspsych-canvas-sliders-response-slider0").style.width = halfValue.toString() + "px";
+          document.getElementById("jspsych-canvas-sliders-response-slider1").style.width = halfValue.toString() + "px";
+        }
+      },
     ]
   }
   tempTimeline.push(trialTimeline);
