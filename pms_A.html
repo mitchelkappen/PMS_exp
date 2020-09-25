@@ -88,13 +88,13 @@ var soundCheck = {
 var instructions = {
   type: 'instructions',
   pages: [
-    'U zult zo een taak uitvoeren waarbij u verschillende afbeeldingen te zien krijgt welke u daarna op twee schalen beoordeelt aan de hand van uw eerste indruk.'+
+    'U zult zo een taak uitvoeren waarbij u verschillende afbeeldingen te zien krijgt. Deze dient u telkens op twee schalen te beoordelen aan de hand van uw eerste indruk.'+
     '<br><br>Als u het moeilijk vindt deze schalen te beantwoorden voor een afbeelding, probeer dan zo goed mogelijk te antwoorden zonder te diep na te denken. <br> Gebruik uw intu&iuml;tie. ',
     'U zult telkens eerst 3 seconden een fixatiekruis zien waar u naar dient te kijken. ' +
     '<br>Vervolgens ziet u de afbeeldingen voor 6 seconden en daarna dient u zo snel mogelijk te antwoorden wat u bij de afbeeldingen voelt, geef dus aan wat het eerste in u opkomt. ' +
     '<br><br>Bij elke afbeelding dient u op twee schalen te antwoorden: <b>valentie / aangenaamheid</b> en <b>activiteit / opwinding</b>. <br>Deze zullen nu eerst beter uitgelegd worden!',
     '<b> Valentie / aangenaamheid </b> is een maatstaaf voor waarde.'+
-    '<br><br>Een afbeelding is POSITIEF als het iets vertegenwoordigt dat als goed wordt beschouwd, terwijl de afbeelding NEGATIEF is als het iets vertegenwoordigt dat als slecht wordt beschouwd.'+
+    '<br><br>Een afbeelding is POSITIEF als het als goed wordt beschouwd, terwijl de afbeelding NEGATIEF is als het als slecht wordt beschouwd.'+
     '<br>Geef de valentie van elke afbeelding aan op een schaal van ZEER NEGATIEF tot ZEER POSITIEF, waarbij het middelpunt NEUTRAAL vertegenwoordigt. ',
     '<b> Voorbeelden:</b><br><br>'+
     'Als u bijvoorbeeld het gevoel hebt dat &quot;atoombom&quot; een zeer negatieve betekenis heeft, dan antwoord u ver links op de schaal.'+
@@ -152,7 +152,7 @@ function shuffle(array) {
 
 tempTimeline = [];
 for (i = 0; i <= imgNumbers.length-1; i++) {
-  // for (i = 0; i <= 3; i++) {
+// for (i = 0; i <= 3; i++) {
   var trialTimeline = {
     timeline: [
       {
@@ -166,8 +166,12 @@ for (i = 0; i <= imgNumbers.length-1; i++) {
         stimulus: "https://ghepmk01.ugent.be/limesurvey2/upload/surveys/454468/images/Series_A/" + imgNumbers[i] + ".jpg",
         choices: jsPsych.NO_KEYS,
         prompt: "<p>Bekijk deze afbeelding voor 6 seconden</p>",
-        trial_duration: 6000
-        // trial_duration: 1000
+        trial_duration: 6000,
+        // trial_duration: 1000,
+        on_finish: function(data) {
+          str = data.stimulus
+          data.stimulusShort = str.substring(str.length - 8, str.length-4); // Save stimulus in short
+        }
       },
       {
         type: 'canvas-sliders-response',
@@ -182,7 +186,7 @@ for (i = 0; i <= imgNumbers.length-1; i++) {
         slider_full_width: [true],
         require_change: [1, 1],
         require_change_warning: ['<span style="color: red;">'+
-                'Beweeg de slider</span>'],
+                'Beweeg de sliders</span>'],
         slider_arrangement: [0,1],
         slider_prompt: [['Valentie'],['Opwinding']],
         button_label: 'Volgende',
@@ -190,6 +194,10 @@ for (i = 0; i <= imgNumbers.length-1; i++) {
           halfValue = window.innerWidth*.5;
           document.getElementById("jspsych-canvas-sliders-response-slider0").style.width = halfValue.toString() + "px";
           document.getElementById("jspsych-canvas-sliders-response-slider1").style.width = halfValue.toString() + "px";
+        },
+        on_finish: function(data) {
+          data.valence = data.response[0].answer; // Save slider responses
+          data.arousal = data.response[1].answer;
         }
       },
     ]
@@ -278,8 +286,6 @@ jsPsych.init( {
     var filenameID  = 'data_'+ParticipantNo+'_'+ IDnumber +'_'+Datum; // Filename
     var interactionID  = "interactionData/interactData_"+ jsPsych.data.get().select('subject').values[0] +"_"+ jsPsych.data.get().select('session').values[0] +"_"+Datum; // Filename
 
-    // console.log(jsPsych.data.get().csv()); // Show data in console
-    // jsPsych.data.get().localSave('csv', filenameID+'.csv'); // Save CSV locally (misschien goed idee als backup bij de ECT studie?)
     saveData(filenameID,jsPsych.data.get().csv());       // Voeg bij naam nog participant ID enzo in, maar moet er een invoer voor bestaan voor het experiment
     // jsPsych.data.displayData('json');
     var interactionData = jsPsych.data.getInteractionData();
